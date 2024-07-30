@@ -59,23 +59,44 @@ function applyDarkMode() {
     `;
     document.head.appendChild(style);
   }
-  
+ // Listen for messages from the popup
+  chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (request.darkModeEnabled) {
+      applyDarkMode();
+    } else {
+      applyLightMode();
+    }
+  });
+
   if (darkMode) {
     applyDarkMode();
   } else {
     applyLightMode();
   }
-  
 
-function detectAndApplyMode() {
-  const bgColor = getColorAt(0, 0); // Sample color
-  const darkMode = isDarkColor(bgColor.r, bgColor.g, bgColor.b);
-  
-  if (darkMode) {
-    applyDarkMode();
-  } else {
-    applyLightMode();
+  function getBackgroundColor() {
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const rgb = bgColor.match(/\d+/g).map(Number);
+    return { r: rgb[0], g: rgb[1], b: rgb[2] };
   }
-}
 
-window.addEventListener('load', detectAndApplyMode);
+
+  function detectAndApplyMode() {
+    const bgColor = getBackgroundColor();
+    if (isDarkColor(bgColor.r, bgColor.g, bgColor.b)) {
+      applyDarkMode();
+    } else {
+      applyLightMode();
+    }
+  }
+
+window.addEventListener('load', function () {
+  // Load the current state from storage and apply the mode
+  chrome.storage.sync.get(['darkModeEnabled'], function (result) {
+    if (result.darkModeEnabled) {
+      applyDarkMode();
+    } else {
+      applyLightMode();
+    }
+  });
+});
