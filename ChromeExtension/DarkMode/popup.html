@@ -1,27 +1,17 @@
+<!-- popup.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Dark Mode Toggle</title>
-  <style>
-    body {
-      width: 200px;
-      font-family: Arial, sans-serif;
-      padding: 10px;
-    }
-    .toggle-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h3>Dark Mode</h3>
-  <div class="toggle-container">
-    <label for="darkModeToggle">Off/On</label>
+  <h1>Toggle Dark Mode</h1>
+  <label class="switch">
     <input type="checkbox" id="darkModeToggle">
-  </div>
+    <span class="slider round"></span>
+  </label>
   <script src="popup.js"></script>
 </body>
 </html>
-

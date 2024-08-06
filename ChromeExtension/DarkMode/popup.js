@@ -1,21 +1,20 @@
-document.addEventListener('DOMContentLoaded', function () {
-  const toggle = document.getElementById('darkModeToggle');
+document.addEventListener('DOMContentLoaded', function() {
+  var checkbox = document.getElementById('darkModeToggle');
 
-  // Load the current state from storage
-  chrome.storage.sync.get(['darkModeEnabled'], function (result) {
-    toggle.checked = result.darkModeEnabled;
-  });
-
-  // Listen for changes to the toggle
-  toggle.addEventListener('change', function () {
-    const isEnabled = toggle.checked;
-
-    // Save the new state to storage
-    chrome.storage.sync.set({ darkModeEnabled: isEnabled });
-
-    // Send a message to the content script to update the mode
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      chrome.tabs.sendMessage(tabs[0].id, { darkModeEnabled: isEnabled });
+  // Initialize the checkbox state based on the current page's dark mode status
+  chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+    chrome.tabs.executeScript(tabs[0].id, {
+      code: 'document.body.classList.contains("dark-mode")'
+    }, function(results) {
+      if (results[0]) {
+        checkbox.checked = true;
+      }
     });
   });
+
+  // Add event listener to toggle dark mode
+  checkbox.addEventListener('change', function() {
+    chrome.runtime.sendMessage({ action: "toggleDarkMode" });
+  });
 });
+
